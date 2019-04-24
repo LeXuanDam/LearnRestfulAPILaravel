@@ -11,14 +11,13 @@ class UserController extends Controller
 {
     /**
      * @OA\Post(
-     *   path="/api/login",
+     *   path="/api/register",
      *   tags={"User"},
-     *   summary="Đăng nhập",
-     *   operationId="login",
+     *   summary="Register",
+     *   operationId="register",
      *   @OA\Parameter(
      *     name="user_name",
      *     in="query",
-     *     description="Số điện thoại",
      *     required=true,
      *     @OA\Schema(
      *      type="string",
@@ -27,7 +26,14 @@ class UserController extends Controller
      *   @OA\Parameter(
      *     name="password",
      *     in="query",
-     *     description="Mật khẩu",
+     *     required=true,
+     *     @OA\Schema(
+     *      type="string",
+     *     ),
+     *   ),
+     *      @OA\Parameter(
+     *     name="confirm_password",
+     *     in="query",
      *     required=true,
      *     @OA\Schema(
      *      type="string",
@@ -35,7 +41,7 @@ class UserController extends Controller
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="Gửi yêu cầu thành công",
+     *     description="Success",
      *     @OA\MediaType(
      *      mediaType="application/json",
      *     )
@@ -46,33 +52,62 @@ class UserController extends Controller
     {
         $params = $request->all();
         $this->validateRegister($request);
-        $user = User::where('user_name', $params['user_name'])->exits();
+        $user = User::where('user_name', $params['user_name'])->exists();
         if ($user) {
-            return $this->response(404, 'user da ton tai');
+            return $this->response(404, 'User exists');
         }
         if ($params['password'] != $params['confirm_password']) {
-             return $this->response(401, 'confirm password sai');
+             return $this->response(401, 'Confirm password wrong');
         }
         User::insert([
             'user_name' => $params['user_name'],
             'password' => bcrypt($params['password'])
         ]);
-         return $this->response(200, 'dang ky thanh cong');
-
+         return $this->response(200, 'Success');
     }
-
+    /**
+     * @OA\Post(
+     *   path="/api/login",
+     *   tags={"User"},
+     *   summary="Login",
+     *   operationId="login",
+     *   @OA\Parameter(
+     *     name="user_name",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(
+     *      type="string",
+     *     ),
+     *   ),
+     *   @OA\Parameter(
+     *     name="password",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(
+     *      type="string",
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Success",
+     *     @OA\MediaType(
+     *      mediaType="application/json",
+     *     )
+     *   )
+     * )
+     */
     public function login(Request $request)
     {
         $params = $request->all();
         $this->validateLogin($request);
         $user = User::where('user_name', $params['user_name'])->first();
         if (!$user) {
-             return $this->response(404, 'user khong ton tai');
+             return $this->response(404, 'user not exists');
         }
         if (!password_verify($params['password'], $user->password)) {
-             return $this->response(401, 'password khong dung');
+             return $this->response(401, 'password incorrect');
         }
-         return $this->response(200, 'dang nhap thanh cong', [
+         return $this->response(200, 'Login success', [
             'access_token' => JWT::encode($user)
         ]);
     }

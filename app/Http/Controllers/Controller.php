@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
  *     schemes={"http","https"},
  *     @OA\Info(
  *         version="1.1.2",
- *         title="Hataraku API Phase 2",
+ *         title="Restful API Laravel",
  *     )
  * )
  */
