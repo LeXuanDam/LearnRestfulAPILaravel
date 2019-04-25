@@ -29,6 +29,7 @@ class UserController extends Controller
      *     required=true,
      *     @OA\Schema(
      *      type="string",
+     *      format="password",
      *     ),
      *   ),
      *      @OA\Parameter(
@@ -37,6 +38,7 @@ class UserController extends Controller
      *     required=true,
      *     @OA\Schema(
      *      type="string",
+     *      format="password",
      *     ),
      *   ),
      *   @OA\Response(
@@ -85,6 +87,7 @@ class UserController extends Controller
      *     required=true,
      *     @OA\Schema(
      *      type="string",
+     *      format="password",
      *     ),
      *   ),
      *   @OA\Response(
